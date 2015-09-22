@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>light and temperature sensors, switch LED</title>
+        <script type="text/javascript">
+            window.onload = function () {
+                document.getElementById('hostname').innerHTML = location.hostname;
+            }
+            setInterval(function () {
+                var date = new Date();
+                var date_string = date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear() + ', ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+                document.getElementById('date').innerHTML = date_string;
+            }, 1000);
+            var url = 'ws://' + location.hostname + ':8080';
+            var ws = new WebSocket(url);
+            setInterval(function () {
+                ws.send('get');
+            }, 1000);
+            ws.onmessage = function (evt) {
+                data = JSON.parse(evt.data);
+                document.getElementById('light').innerHTML = data.light;
+                document.getElementById('temp').innerHTML = data.temp;
+            };
+        </script>
+    </head>
+    <body>
+        <h3>hostname</h3>
+        <p id="hostname"></p>
+
+        <h3>date</h3>
+        <p id='date'></p>
+
+        <h3>light sensor value</h3>
+        <p id="light">N/A</p>
+
+        <h3>temperature sensor value (degree centigrade)</h3>
+        <p id="temp">N/A</p>
+    </body>
+</html>
